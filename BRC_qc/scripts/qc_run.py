@@ -1,0 +1,55 @@
+import argparse
+import sys
+import os
+import subprocess
+
+def count_lines(fname):
+    with open(fname) as f:
+        return len(f)
+
+def submit(cmd, **kwargs):
+    submit_cmd = [
+        "{JOBSUBpath}/jobsub",
+        "-q", "cpu", "-p", "1", "-s", "BRC_QC", "-t", "{time_limit}"
+        "-m", "10", "-c", cmd,
+    ]
+    submit_cmd = [s.format(**kwargs) for s in submit_cmd]
+    print(submit_cmd)
+    stdout = subprocess.check_output(submit_cmd)
+    print(stdout)
+
+def main():
+    parser = argparse.ArgumentParser(f'QC data generation', add_help=True)
+    parser.add_argument('--in', dest="subjids", required=True, help='A list of subject IDs that are pre-processed and have had IDP extraction run')
+    parser.add_argument('--indir', required=True, help='The full path of the input directory. All of the IDs that are in the input list MUST have a pre-processed folder in this directory')
+    args = parser.parse_args()
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(1)
+
+    fsldir = os.environ.get("FSLDIR", ""):
+    if not fsldir:
+        raise RuntimeError("FSLDIR not set")
+
+    brc_qc_scr = os.environ.get("BRC_QC_SCR", ""):
+    if not brc_qc_scr:
+        raise RuntimeError("BRC_QC_SCR not set")
+
+    cmd = [f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.sh",
+           "--subjids", args.subjids, "--indir", args.indir]
+
+    if os.environ.get("CLUSTER_MODE", "NO") == "YES":
+        num_subjs = count_lines(args.subjids)
+        minutes = num_subjs * 4
+        hours = minutes // 60
+        minutes = minutes % 60
+        time_limit = f"{hours}:{minutes}:00"
+        
+        job_id = submit(cmd, time_limit=time_limit, **os.environ)
+        print(f"jobID_1: {job_id}")
+    else:
+        subprocess.check_output(cmd)
+
+if __name__ == "__main__":
+    main()
