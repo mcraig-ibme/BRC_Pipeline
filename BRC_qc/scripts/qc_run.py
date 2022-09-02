@@ -11,18 +11,19 @@ import subprocess
 
 def count_lines(fname):
     with open(fname) as f:
-        return len(f)
+        return len([l for l in f.readlines() if l.strip()])
 
 def submit(cmd, **kwargs):
     submit_cmd = [
         "{JOBSUBpath}/jobsub",
-        "-q", "cpu", "-p", "1", "-s", "BRC_QC", "-t", "{time_limit}"
-        "-m", "10", "-c", cmd,
+        "-q", "cpu", "-p", "1", "-s", "BRC_QC", "-t", "{time_limit}",
+        "-m", "10", "-c", cmd
     ]
     submit_cmd = [s.format(**kwargs) for s in submit_cmd]
-    print(submit_cmd)
+    print(" ".join(submit_cmd))
     stdout = subprocess.check_output(submit_cmd)
     print(stdout)
+    return int(stdout.split()[-1])
 
 def main():
     parser = argparse.ArgumentParser(f'QC data generation', add_help=True)
@@ -39,18 +40,16 @@ def main():
         parser.error("Input directory does not exist or is not a directory")
     if not os.path.isfile(args.subjids):
         parser.error("Subject list does not exist or is not a file")
-    os.makedirs(args.outdir, exist_ok=True)
 
-    fsldir = os.environ.get("FSLDIR", ""):
+    fsldir = os.environ.get("FSLDIR", "")
     if not fsldir:
         raise RuntimeError("FSLDIR not set")
 
-    brc_qc_scr = os.environ.get("BRC_QC_SCR", ""):
+    brc_qc_scr = os.environ.get("BRC_QC_SCR", "")
     if not brc_qc_scr:
         raise RuntimeError("BRC_QC_SCR not set")
 
-    cmd = [f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.sh",
-           "--subjids", args.subjids, "--indir", args.indir, "--outdir", args.outdir]
+    cmd = f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.py --subjids={args.subjids} --indir={args.indir} --outdir={args.outdir}"
 
     if os.environ.get("CLUSTER_MODE", "NO") == "YES":
         num_subjs = count_lines(args.subjids)

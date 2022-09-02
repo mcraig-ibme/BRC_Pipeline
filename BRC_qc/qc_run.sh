@@ -6,4 +6,4 @@
 
 set -e
 
-${FSLDIR}/bin/fslpython ${BRC_IDPEXTRACT_SCR}/qc_run.py $@
+${FSLDIR}/bin/fslpython ${BRC_QC_SCR}/qc_run.py $@
