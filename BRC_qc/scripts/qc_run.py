@@ -1,3 +1,9 @@
+"""
+qc_run.py: Python implementation of BRC script to submit QC run job
+
+This script does what would normally be done by the main wrapper script
+qc_run.sh but it's just way easier to write it in Python.
+"""
 import argparse
 import sys
 import os
@@ -22,11 +28,18 @@ def main():
     parser = argparse.ArgumentParser(f'QC data generation', add_help=True)
     parser.add_argument('--in', dest="subjids", required=True, help='A list of subject IDs that are pre-processed and have had IDP extraction run')
     parser.add_argument('--indir', required=True, help='The full path of the input directory. All of the IDs that are in the input list MUST have a pre-processed folder in this directory')
+    parser.add_argument('--outdir', required=True, help='The full path of the output directory. QC output for all subjects will be put in this directory')
     args = parser.parse_args()
 
     if len(sys.argv) == 1:
         parser.print_help()
         sys.exit(1)
+
+    if not os.path.isdir(args.indir):
+        parser.error("Input directory does not exist or is not a directory")
+    if not os.path.isfile(args.subjids):
+        parser.error("Subject list does not exist or is not a file")
+    os.makedirs(args.outdir, exist_ok=True)
 
     fsldir = os.environ.get("FSLDIR", ""):
     if not fsldir:
@@ -37,7 +50,7 @@ def main():
         raise RuntimeError("BRC_QC_SCR not set")
 
     cmd = [f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.sh",
-           "--subjids", args.subjids, "--indir", args.indir]
+           "--subjids", args.subjids, "--indir", args.indir, "--outdir", args.outdir]
 
     if os.environ.get("CLUSTER_MODE", "NO") == "YES":
         num_subjs = count_lines(args.subjids)
