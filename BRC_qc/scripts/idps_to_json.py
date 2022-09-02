@@ -3,34 +3,8 @@ idps_to_json.py: Convert IDP values for each subject into a JSON file
 """
 import os
 import sys
-import argparse
 import json
 import pandas as pd
-
-def get_tree(names):
-    print("get_tree: ", names)
-    prefixes = []
-    for l in range(len(names)):
-        prefixes = set(["_".join(n.split("_")[:l]) for n in names])
-        if len(prefixes) > 1:
-            break
-            
-    print("prefixes: ", prefixes)
-    if len(prefixes) == 1:
-        return names
-    else:
-        ret = {}
-        for prefix in prefixes:
-            #print(prefix, l)
-            #for n in names:
-                #print(tuple(n[:l]), prefix)
-                #if tuple(n[:l]) == prefix:
-                #    print(n[l:])
-            names_with_prefix = [n[len(prefix)+1:] for n in names if n.startswith(prefix)]
-            #print(names_with_prefix)
-            ret[prefix] = get_tree(names_with_prefix)
-            
-        return ret
 
 def get_idp_names():
     idp_names_file = os.path.join(os.environ["BRC_GLOBAL_DIR"], "config", "IDP_list.txt")
