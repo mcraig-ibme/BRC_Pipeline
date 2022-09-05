@@ -1,0 +1,187 @@
+{
+    "squat_report" : [
+        [
+            {
+                "group_title" : "SIENAX",
+                "var" : "T1_SIENAX_headsize_scaling",
+                "title" : "Head size"
+            },
+            {
+                "var" : ["T1_SIENAX_brain-norm_vol", "T1_SIENAX_brain-unnorm_vol"],
+                "title" : "Brain vol",
+                "xticklabels" : ["Norm", "Unnorm"]
+            },
+            {
+                "var" : ["T1_SIENAX_peripheral_GM_norm_vol", "T1_SIENAX_peripheral_GM_unnorm_vol"],
+                "title" : "Peripheral GM vol",
+                "xticklabels" : ["Norm", "Unnorm"]
+            }
+        ],
+        [
+            {
+                "var" : ["T1_SIENAX_GM_norm_vol", "T1_SIENAX_GM_unnorm_vol"],
+                "title" : "GM vol",
+                "xticklabels" : ["Norm", "Unnorm"]
+            },
+            {
+                "var" : ["T1_SIENAX_WM_norm_vol", "T1_SIENAX_WM_unnorm_vol"],
+                "title" : "WM vol",
+                "xticklabels" : ["Norm", "Unnorm"]
+            },
+            {
+                "var" : ["T1_SIENAX_CSF_norm_vol", "T1_SIENAX_CSF_unnorm_vol"],
+                "title" : "CSF vol",
+                "xticklabels" : ["Norm", "Unnorm"]
+            }
+        ],
+        [
+            {
+                "group_title" : "FIRST",
+                "var" : ["T1_FIRST_left_thalamus", "T1_FIRST_right_thalamus"],
+                "title" : "Thalamus",
+                "xticklabels" : ["Left", "Right"]
+            },
+            {
+                "var" : ["T1_FIRST_left_caudate", "T1_FIRST_right_caudate"],
+                "title" : "Caudate",
+                "xticklabels" : ["Left", "Right"]
+            },
+            {
+                "var" : ["T1_FIRST_left_putamen", "T1_FIRST_right_putamen"],
+                "title" : "Putamen",
+                "xticklabels" : ["Left", "Right"]
+            }
+        ],
+        [
+            {
+                "var" : ["T1_FIRST_left_pallidum", "T1_FIRST_right_pallidum"],
+                "title" : "Pallidum",
+                "xticklabels" : ["Left", "Right"]
+            },
+            {
+                "var" : ["T1_FIRST_left_hippocampus", "T1_FIRST_right_hippocampus"],
+                "title" : "Hippocampus",
+                "xticklabels" : ["Left", "Right"]
+            },
+            {
+                "var" : ["T1_FIRST_left_amygdala", "T1_FIRST_right_amygdala"],
+                "title" : "Amygdala",
+                "xticklabels" : ["Left", "Right"]
+            }
+        ],
+        [
+            {
+                "var" : ["T1_FIRST_left_accumbens", "T1_FIRST_right_accumbens"],
+                "title" : "Accumbens",
+                "xticklabels" : ["Left", "Right"]
+            },
+            {
+                "var" : "T1_FIRST_brain_stem+4th_ventricle",
+                "title" : "Brain stem + 4th ventricle"
+            }
+        ],
+        [
+            {
+                "group_title" : "Volume-to-volume motion",
+                "var" : "mot_abs",
+                "title" : "Absolute motion",
+                "ylabel" : "mm (avg)",
+                "ylim" : 0
+            },
+            {
+                "var" : "mot_rel",
+                "title" : "Relative motion",
+                "ylabel" : "mm (avg)",
+                "ylim" : 0
+            },
+            {
+                "var" : "motion_trans_avg",
+                "title" : "Translations",
+                "ylabel" : "mm (avg)",
+                "xticklabels" : ["x", "y", "z"]
+            },
+            {
+                "var" : "motion_rot_avg",
+                "title" : "Rotations",
+                "ylabel" : "deg (avg)",
+                "xticklabels" : ["x", "y", "z"]
+            }
+        ],
+        [
+             {
+                "group_title" : "Eddy currents",
+                "var" : "ec_lin_avg",
+                "title" : "EC linear terms",
+                "ylabel" : "Hz/mm (std)",
+                "xticklabels" : ["x", "y", "z"],
+                "ylim" : 0
+            },
+            {
+                "group_title" : "Within-volume motion",
+                "var" : "ec_s2v_trans_avg_std",
+                "title" : "S2V translations",
+                "ylabel" : "mm (std)",
+                "xticklabels" : ["x", "y", "z"],
+                "ylim" : 0
+            },
+            {
+                "var" : "ec_s2v_rot_avg_std",
+                "title" : "S2V rotations",
+                "ylabel" : "deg (std)",
+                "xticklabels" : ["x", "y", "z"],
+                "ylim" : 0
+            }
+        ],
+        [
+            {
+                "group_title" : "Outliers",
+                "var" : "outliers_tot",
+                "title" : "Total outliers",
+                "ylabel" : "%",
+                "ylim" : 0
+            },
+            {
+                "var" : "outliers_b",
+                "title" : "b-value outliers",
+                "ylabel" : "%",
+                "xticklabels" : "data_unique_bvals",
+                "xlabel" : "b-value",
+                "ylim" : 0
+            },
+            {
+                "var" : "outliers_pe",
+                "title" : "PE dir outliers",
+                "ylabel" : "%",
+                "xticklabels" : "data_unique_pes",
+                "xlabel" : "PE direction",
+                "ylim" : 0
+            }
+        ],
+        [
+            {
+                "group_title" : "SNR/CNR",
+                "var" : "nr_snr_avg",
+                "title" : "SNR (avg)",
+                "xticklabels" : [0],
+                "xlabel" : "b-value",
+                "ylim" : 0
+            },
+            {
+                "var" : "nr_cnr_avg",
+                "title" : "CNR (avg)",
+                "xticklabels" : "data_unique_bvals",
+                "xlabel" : "b-value",
+                "ylim" : 0
+            }
+        ],
+        [
+            {
+                "group_title" : "Susceptibility",
+                "var" : "susc_vox_displ_std",
+                "title" : "Susceptibility",
+                "ylabel" : "Vox (std)",
+                "ylim" : 0
+            }
+        ]
+    ]
+}
