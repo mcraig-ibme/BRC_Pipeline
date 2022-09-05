@@ -25,6 +25,12 @@ def submit(cmd, **kwargs):
     print(stdout)
     return int(stdout.split()[-1])
 
+def envvar(var):
+    val = os.environ.get(var, "")
+    if not val:
+        raise RuntimeError(f"{var} not set")
+    return val
+
 def main():
     parser = argparse.ArgumentParser(f'QC data generation', add_help=True)
     parser.add_argument('--in', dest="subjids", required=True, help='A list of subject IDs that are pre-processed and have had IDP extraction run')
@@ -39,17 +45,14 @@ def main():
     if not os.path.isdir(args.indir):
         parser.error("Input directory does not exist or is not a directory")
     if not os.path.isfile(args.subjids):
-        parser.error("Subject list does not exist or is not a file")
+        parser.error(f"Subject list {args.subjids} does not exist or is not a file")
 
-    fsldir = os.environ.get("FSLDIR", "")
-    if not fsldir:
-        raise RuntimeError("FSLDIR not set")
-
-    brc_qc_scr = os.environ.get("BRC_QC_SCR", "")
-    if not brc_qc_scr:
-        raise RuntimeError("BRC_QC_SCR not set")
-
-    cmd = f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.py --subjids={args.subjids} --indir={args.indir} --outdir={args.outdir}"
+    fsldir = envvar("FSLDIR")
+    brc_qc_scr = envvar("BRC_QC_SCR")
+    brc_global_dir = envvar("BRC_GLOBAL_DIR")
+    report_def = f"{brc_global_dir}/config/qc_report.json"
+    
+    cmd = f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.py --subjids={args.subjids} --indir={args.indir} --outdir={args.outdir} --report-def={report_def}"
 
     if os.environ.get("CLUSTER_MODE", "NO") == "YES":
         num_subjs = count_lines(args.subjids)
