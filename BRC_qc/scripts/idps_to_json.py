@@ -6,16 +6,18 @@ import sys
 import json
 import pandas as pd
 
+GLOBAL_IDPLIST_PATH = "config/IDP_list.txt"
+SUBJECT_IDPS_PATH = "analysis/IDP_files/IDPs.txt"
+
 def get_idp_names():
-    idp_names_file = os.path.join(os.environ["BRC_GLOBAL_DIR"], "config", "IDP_list.txt")
+    idp_names_file = os.path.join(os.environ["BRC_GLOBAL_DIR"], GLOBAL_IDPLIST_PATH)
     idp_names = pd.read_csv(idp_names_file, sep="\s+", header=None)
     idp_names = list(idp_names[1])
     print(" - IDP names: %s" % ",".join(idp_names))
     return idp_names
 
-def subject_to_json(subjdir, idp_names):
-    subj_idps_dir = os.path.join(subjdir, "analysis/IDP_files")
-    subj_idps_file = os.path.join(subj_idps_dir, "IDPs.txt")
+def subject_to_json(subjdir, idp_names, out_path):
+    subj_idps_file = os.path.join(subjdir, SUBJECT_IDPS_PATH)
     with open(subj_idps_file, "r") as f:
         idps = f.read().split()
     print(" - Found IDPs for subject")
@@ -25,12 +27,12 @@ def subject_to_json(subjdir, idp_names):
         if not idp.strip().lower() == "nan":
             qc_data[f"qc_{name}"] = float(idp)
 
-    qc_output = os.path.join(subj_idps_dir, 'qc.json')
-    with open(qc_output, 'w') as f:
+    os.makedirs(os.path.dirname(out_path), exist_ok=True)
+    with open(out_path, 'w') as f:
         json.dump(qc_data, f, indent=4)
-    print(f" - Wrote subject QC output to {qc_output}")
+    print(f" - Wrote subject QC output to {out_path}")
 
 def main():
     idp_names = get_idp_names()
     for subjdir in sys.argv[1:]:
-        do_subject(subjdir, idp_names)
+        do_subject(subjdir, idp_names, "qc.json")
