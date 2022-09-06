@@ -13,17 +13,19 @@ def get_idp_names():
     idp_names_file = os.path.join(os.environ["BRC_GLOBAL_DIR"], GLOBAL_IDPLIST_PATH)
     idp_names = pd.read_csv(idp_names_file, sep="\s+", header=None)
     idp_names = list(idp_names[1])
+    print(" - IDP names from %s" % idp_names_file)
     print(" - IDP names: %s" % ",".join(idp_names))
+    print(" - Found %i IDP names" % len(idp_names))
     return idp_names
 
 def subject_to_json(subjdir, idp_names, out_path):
     subj_idps_file = os.path.join(subjdir, SUBJECT_IDPS_PATH)
     with open(subj_idps_file, "r") as f:
-        idps = f.read().split()
-    print(" - Found IDPs for subject")
+        idps = f.read().split()[1:]
+    print(f" - Found {len(idps)} IDPs for subject")
 
     qc_data = {}
-    for idp, name in zip(idps[1:], idp_names):
+    for idp, name in zip(idps, idp_names):
         if not idp.strip().lower() == "nan":
             qc_data[f"qc_{name}"] = float(idp)
 
