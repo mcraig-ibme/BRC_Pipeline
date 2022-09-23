@@ -36,6 +36,7 @@ def main():
     parser.add_argument('--in', dest="subjids", required=True, help='A list of subject IDs that are pre-processed and have had IDP extraction run')
     parser.add_argument('--indir', required=True, help='The full path of the input directory. All of the IDs that are in the input list MUST have a pre-processed folder in this directory')
     parser.add_argument('--outdir', required=True, help='The full path of the output directory. QC output for all subjects will be put in this directory')
+    parser.add_argument('--mriqc', help='Run MRIQC', action="store_true", default=False)
     args = parser.parse_args()
 
     if len(sys.argv) == 1:
@@ -53,14 +54,20 @@ def main():
     report_def = f"{brc_global_dir}/config/qc_report.json"
     
     cmd = f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.py --subjids={args.subjids} --indir={args.indir} --outdir={args.outdir} --report-def={report_def}"
+    if args.mriqc:
+        cmd += " --mriqc"
 
     if os.environ.get("CLUSTER_MODE", "NO") == "YES":
+        if args.mriqc:
+            mins_per_subj = 30
+        else:
+            mins_per_subj = 4
         num_subjs = count_lines(args.subjids)
-        minutes = num_subjs * 4
+        minutes = num_subjs * mins_per_subj
         hours = minutes // 60
         minutes = minutes % 60
         time_limit = f"{hours}:{minutes}:00"
-        
+
         job_id = submit(cmd, time_limit=time_limit, **os.environ)
         print(f"jobID_1: {job_id}")
     else:
