@@ -1,6 +1,8 @@
 """
 mriqc.py: BRC script to run QC on Eddy output
 """
+import os
+
 from utils import runcmd
 
 def run_eddyqc(subjid, subjdir, eddypath, outpath):
@@ -14,6 +16,6 @@ def run_eddyqc(subjid, subjdir, eddypath, outpath):
         '--bvecs', 'Pos.bvec',
         '--eddy-params', 'acqparams.txt',
         '--mask', 'nodif_brain_mask.nii.gz',
-        '--overwrite', '-o', outpath,
+        '--overwrite', '-o', os.path.join(subjdir, outpath),
     ]
     runcmd(cmd)

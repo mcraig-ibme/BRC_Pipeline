@@ -49,14 +49,14 @@ def main():
     print("Found %i subjects: %s" % (len(subjids), ",".join(subjids)))
 
     qcfiles = set()
-    # Generate individual subject JSON QC data from IDP values
     for subjid in subjids:
         subjdir = os.path.join(args.indir, subjid)
+        print(f" - Processing subject {subjdir}")
         if not os.path.isdir(subjdir):
             print(f" - WARNING: Subject directory {subjdir} not found or not a directory - skipping")
             continue
 
-        print(f" - Processing subject IDPs in {subjdir}")
+        # Generate QC data from IDP values
         run_idpqc(subjid, subjdir, SUBJECT_IDPQC_PATH)
         qcfiles.add(SUBJECT_IDPQC_PATH)
 
@@ -65,14 +65,11 @@ def main():
             run_eddyqc(subjid, subjdir, EDDY_OUTPUT_PATH, SUBJECT_EDDYQC_PATH)
             qcfiles.add(os.path.join(SUBJECT_EDDYQC_PATH, "qc.json"))
 
-    # Run MRIQC if required
-    if args.mriqc:
-        for subjid in subjids:
-            subjdir = os.path.join(args.indir, subjid)
-            os.makedirs(os.path.join(subjdir, SUBJECT_MRIQC_PATH), exist_ok=True)
+        # Run MRIQC if requested
+        if args.mriqc:
             run_mriqc(subjid, subjdir, SUBJECT_MRIQC_PATH)
-        qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t1.json"))
-        qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t2.json"))
+            qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t1.json"))
+            qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t2.json"))
 
     # Collect individual subjects into a group JSON file and generate reports
     print("Collecting subject QC dir into group JSON file")

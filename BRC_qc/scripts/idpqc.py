@@ -21,7 +21,8 @@ def _get_idp_names():
 
 def run_idpqc(subjid, subjdir, out_fpath):
     print(f" - Running IDP QC in {subjdir}")
-    if IDP_NAMES is not None:
+    global IDP_NAMES
+    if IDP_NAMES is None:
         IDP_NAMES = _get_idp_names()
     subj_idps_file = os.path.join(subjdir, SUBJECT_IDPS_PATH)
     with open(subj_idps_file, "r") as f:

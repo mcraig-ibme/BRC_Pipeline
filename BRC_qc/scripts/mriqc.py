@@ -37,6 +37,7 @@ def run_mriqc(subjid, subjdir, outpath):
         # to fit with SQUAT requirements
         anatdir_out = os.path.join(f'{d}/mriqc', f'sub-{subjid}', 'ses-1', 'anat')
         qcdir_out = os.path.join(subjdir, outpath)
+        os.makedirs(qcdir_out, exist_ok=True)
         if os.path.isfile(t1):
             json_in = os.path.join(anatdir_out, f'sub-{subjid}_ses-1_T1w.json')
             json_out = os.path.join(qcdir_out, "t1.json")
