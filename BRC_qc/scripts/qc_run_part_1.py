@@ -11,12 +11,17 @@ import subprocess
 import tempfile
 import shutil
 
-from idps_to_json import get_idp_names, subject_to_json
+from utils import runcmd
+from idpqc import run_idpqc
 from mriqc import run_mriqc
+from eddyqc import run_eddyqc
 
 SUBJECT_IDPQC_PATH = "analysis/QC_files/idpqc.json"
+SUBJECT_EDDYQC_PATH = "analysis/QC_files/eddyqc"
 SUBJECT_MRIQC_PATH = "analysis/QC_files/mriqc"
 SUBJECT_REPORT_PATH = "analysis/QC_files/qc_report.pdf"
+
+EDDY_OUTPUT_PATH = "analysis/dMRI/preproc/eddy/"
 
 def main():
     parser = argparse.ArgumentParser(f'QC data generation', add_help=True)
@@ -43,18 +48,22 @@ def main():
         subjids = [s.strip() for s in f if s.strip()]
     print("Found %i subjects: %s" % (len(subjids), ",".join(subjids)))
 
-    qcfiles = []
+    qcfiles = set()
     # Generate individual subject JSON QC data from IDP values
-    idp_names = get_idp_names()
     for subjid in subjids:
         subjdir = os.path.join(args.indir, subjid)
         if not os.path.isdir(subjdir):
             print(f" - WARNING: Subject directory {subjdir} not found or not a directory - skipping")
             continue
-        
+
         print(f" - Processing subject IDPs in {subjdir}")
-        subject_to_json(subjdir, idp_names, os.path.join(subjdir, SUBJECT_IDPQC_PATH))
-        qcfiles.append(SUBJECT_IDPQC_PATH)
+        run_idpqc(subjid, subjdir, SUBJECT_IDPQC_PATH)
+        qcfiles.add(SUBJECT_IDPQC_PATH)
+
+        # Run squat_eddy if we have Eddy output
+        if os.path.isdir(os.path.join(subjdir, EDDY_OUTPUT_PATH)):
+            run_eddyqc(subjid, subjdir, EDDY_OUTPUT_PATH, SUBJECT_EDDYQC_PATH)
+            qcfiles.add(os.path.join(SUBJECT_EDDYQC_PATH, "qc.json"))
 
     # Run MRIQC if required
     if args.mriqc:
@@ -62,13 +71,13 @@ def main():
             subjdir = os.path.join(args.indir, subjid)
             os.makedirs(os.path.join(subjdir, SUBJECT_MRIQC_PATH), exist_ok=True)
             run_mriqc(subjid, subjdir, SUBJECT_MRIQC_PATH)
-        qcfiles.append(os.path.join(SUBJECT_MRIQC_PATH, "t1.json"))
-        qcfiles.append(os.path.join(SUBJECT_MRIQC_PATH, "t2.json"))
+        qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t1.json"))
+        qcfiles.add(os.path.join(SUBJECT_MRIQC_PATH, "t2.json"))
 
     # Collect individual subjects into a group JSON file and generate reports
     print("Collecting subject QC dir into group JSON file")
     cmd = [
-        "/software/imaging/miniconda3/envs/brc/bin/squat",
+        "squat",
         "--subjdir", args.indir, 
         "--subjects", args.subjids, 
         "--extract",
@@ -77,10 +86,8 @@ def main():
         "--subject-report-path", SUBJECT_REPORT_PATH,
         "--overwrite",
         "--qcpaths",
-    ] + qcfiles
-    print(" ".join(cmd))
-    stdout = subprocess.check_output(cmd)
-    print(stdout.decode("utf-8"))
+    ] + list(qcfiles)
+    runcmd(cmd)
 
 if __name__ == "__main__":
     main()
