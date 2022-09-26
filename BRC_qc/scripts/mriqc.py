@@ -1,15 +1,12 @@
 """
 mriqc.py: BRC script to run MRIQC
 """
-import argparse
-import sys
 import os
-import subprocess
 import tempfile
 import shutil
 import json
 
-from idps_to_json import get_idp_names, subject_to_json
+from utils import runcmd
 
 def run_mriqc(subjid, subjdir, outpath):
     print(f" - Processing MRIQC in {subjdir}")
@@ -34,9 +31,7 @@ def run_mriqc(subjid, subjdir, outpath):
             'singularity', 'run', '--cleanenv', SINGULARITY_IMAGE,
             d, f'{d}/mriqc', 'participant', '--no-sub'
             ]
-        print(" ".join(cmd))
-        stdout = subprocess.check_output(cmd)
-        print(stdout.decode("utf-8"))
+        runcmd(cmd)
 
         # Copy out the JSON files into the QC output tree, with slight reformatting
         # to fit with SQUAT requirements
