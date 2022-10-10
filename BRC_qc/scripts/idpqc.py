@@ -2,8 +2,8 @@
 idps_to_json.py: Convert IDP values for each subject into a JSON file
 """
 import os
-import sys
 import json
+
 import pandas as pd
 
 GLOBAL_IDPLIST_PATH = "config/IDP_list.txt"

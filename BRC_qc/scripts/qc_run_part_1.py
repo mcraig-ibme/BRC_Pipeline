@@ -7,9 +7,6 @@ overlap with qc_run.py because of the need to run as an independent batch job.
 import argparse
 import sys
 import os
-import subprocess
-import tempfile
-import shutil
 
 from utils import runcmd
 from idpqc import run_idpqc

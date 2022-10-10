@@ -7,7 +7,6 @@ qc_run.sh but it's just way easier to write it in Python.
 import argparse
 import sys
 import os
-import subprocess
 
 from utils import runcmd
 
@@ -22,9 +21,7 @@ def submit(cmd, **kwargs):
         "-m", "10", "-c", " ".join(cmd)
     ]
     submit_cmd = [s.format(**kwargs) for s in submit_cmd]
-    print(" ".join(submit_cmd))
-    stdout = subprocess.check_output(submit_cmd)
-    print(stdout)
+    stdout = runcmd(submit_cmd)
     return int(stdout.split()[-1])
 
 def envvar(var):
