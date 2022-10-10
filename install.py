@@ -90,7 +90,7 @@ def find_package(package_name, *check_files, search=(), optional=False):
         if not os.path.isdir(response):
             raise ValueError(f"Specified directory {response} does not exist or is not a directory")
         if not have_files(response, check_files):
-            raise ValueError(f"Expected file {f} not found in directory {response}")
+            raise ValueError(f"Expected file not found in directory {response}")
         return response
 
 def yesno(prompt, default):
@@ -153,7 +153,7 @@ matlabdir = find_package(
 )
 spmdir = find_package(
     "SPM", "spm_add.m", 
-    search=["/usr/local/SPM/*"], optional=True
+    search=["/usr/local/SPM/*", "/usr/local/SPM*", "/usr/local/spm*", "/usr/local/spm/*"], optional=True
 )
 dvarsdir = find_package(
     "DVARS", "DVARSCalc.m", 
@@ -161,7 +161,7 @@ dvarsdir = find_package(
 )
 antsdir = find_package(
     "ANTS", "antsRegistrationSyN.sh", 
-    search=["/usr/local/ANTs*", "/usr/local/ANTs/*", "/usr/local/ANTsX/*"], optional=True
+    search=["/usr/local/ANTs*", "/usr/local/ANTs/*", "/usr/local/ANTsX/*", "/usr/local/ANTsX/*/bin"], optional=True
 )
 c3ddir = find_package(
     "C3D", "c3d_affine_tool", 
@@ -175,6 +175,10 @@ bundled_cudimot = os.path.join(destdir, "global/libs/cuDIMOT")
 cudimotdir = find_package(
     "CUDIMOT", "bin/cudimot_NODDI_Watson.sh", 
     search=[bundled_cudimot, "/usr/local/cudimot*", "/usr/local/cudimot/*"], optional=True
+)
+squatdir = find_package(
+    "squat", "bin/squat_eddy",
+    search=["/usr/local/squat*/", "/usr/local/squat/*"], optional=True
 )
 
 pipelines = {
@@ -213,6 +217,7 @@ with open(setup_script, "w") as setup:
         setup.write(f'source $FREESURFER_HOME/SetUpFreeSurfer.sh\n\n')
 
         setup.write(f'export MATLABpath="{matlabdir}/bin"\n\n')
+        setup.write(f'export SQUATDIR="{squatdir}/bin"\n\n')
 
         # Set libraries for Eddy - FIXME requires FSL 5.0.11?
         setup.write(f'export FSLDIR_5_0_11="{fsl5011dir}"\n')
@@ -232,4 +237,6 @@ with open(setup_script, "w") as setup:
     setup.write(f'export ANTSPATH="{antsdir}"\n') # Structural pipeline
     setup.write(f'export C3DPATH="{c3ddir}"\n\n') # Structural pipeline
 
-    setup.write(f'export PATH=$PATH:$BRC_SCTRUC_DIR:$BRC_DMRI_DIR:$BRC_FMRI_DIR:$BRC_PMRI_DIR:$BRC_FMRI_GP_DIR:$BRC_IDPEXTRACT_DIR\n')
+    path = ":".join([f"$BRC_{env}_DIR" for env in pipelines.values()])
+    print(path)
+    setup.write(f'export PATH=$PATH:{path}')
