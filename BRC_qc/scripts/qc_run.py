@@ -9,6 +9,8 @@ import sys
 import os
 import subprocess
 
+from utils import runcmd
+
 def count_lines(fname):
     with open(fname) as f:
         return len([l for l in f.readlines() if l.strip()])
@@ -17,7 +19,7 @@ def submit(cmd, **kwargs):
     submit_cmd = [
         "{JOBSUBpath}/jobsub",
         "-q", "cpu", "-p", "1", "-s", "BRC_QC", "-t", "{time_limit}",
-        "-m", "10", "-c", cmd
+        "-m", "10", "-c", " ".join(cmd)
     ]
     submit_cmd = [s.format(**kwargs) for s in submit_cmd]
     print(" ".join(submit_cmd))
@@ -53,9 +55,16 @@ def main():
     brc_global_dir = envvar("BRC_GLOBAL_DIR")
     report_def = f"{brc_global_dir}/config/qc_report.json"
     
-    cmd = f"{fsldir}/bin/fslpython {brc_qc_scr}/qc_run_part_1.py --subjids={args.subjids} --indir={args.indir} --outdir={args.outdir} --report-def={report_def}"
+    cmd = [
+        f"{fsldir}/bin/fslpython",
+        f"{brc_qc_scr}/qc_run_part_1.py",
+        f"--subjids={args.subjids}",
+        f"--indir={args.indir}",
+        f"--outdir={args.outdir}",
+        f"--report-def={report_def}",
+    ]
     if args.mriqc:
-        cmd += " --mriqc"
+        cmd.append("--mriqc")
 
     if os.environ.get("CLUSTER_MODE", "NO") == "YES":
         if args.mriqc:
@@ -71,7 +80,7 @@ def main():
         job_id = submit(cmd, time_limit=time_limit, **os.environ)
         print(f"jobID_1: {job_id}")
     else:
-        subprocess.check_output(cmd)
+        runcmd(cmd)
 
 if __name__ == "__main__":
     main()

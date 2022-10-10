@@ -73,8 +73,9 @@ def main():
 
     # Collect individual subjects into a group JSON file and generate reports
     print("Collecting subject QC dir into group JSON file")
+    squatdir = os.environ.get("SQUATDIR", "")
     cmd = [
-        "squat",
+        f"{squatdir}/squat",
         "--subjdir", args.indir, 
         "--subjects", args.subjids, 
         "--extract",
