@@ -152,7 +152,7 @@ if [[ $do_freesurfer == "yes" ]]; then
         recon-all -i ${rawT1Folder}/T1_orig.nii.gz -s ${FSFolderName} -all
     fi
 
-    rm -r ${processedT1Folder}/fsaverage
+    rm -rf ${processedT1Folder}/fsaverage
 fi
 
 if [[ $do_fastsurfer == "yes" ]]; then
@@ -174,7 +174,7 @@ if [[ $do_fastsurfer == "yes" ]]; then
 
     run_fastsurfer.sh --t1 ${rawT1Folder}/T1_orig.nii.gz --sid ${FastSurferFolderName} --sd ${processedT1Folder}
 
-    rm -r ${processedT1Folder}/fsaverage
+    rm -rf ${processedT1Folder}/fsaverage
 fi
 
 END_Time="$(date -u +%s)"
