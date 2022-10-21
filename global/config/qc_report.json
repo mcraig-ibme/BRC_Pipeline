@@ -82,40 +82,165 @@
         ],
         [
             {
+                "table_rows_per_page" : 2,
+                "group_title" : "Motion (volume-to-volume)",
+                "var" : "motion_v2v_trans",
+                "type" : "line",
+                "xlabel" : "Volume",
+                "ylabel" : "Translation (mm)",
+                "legend" : ["x", "y", "z"],
+                "title" : "Eddy estimated translations (mm)"
+            }
+        ],
+        [
+            {
+                "var" : "motion_v2v_rot",
+                "type" : "line",
+                "xlabel" : "Volume",
+                "ylabel" : "Rotation (deg)",
+                "legend" : ["x", "y", "z"],
+                "title" : "Eddy estimated rotations (deg)"
+            }
+        ],
+        [
+            {
+                "var" : ["motion_abs", "motion_rel"],
+                "type" : "line",
+                "xlabel" : "Volume",
+                "ylabel" : "Displacement (mm)",
+                "legend" : ["Absolute", "Relative"],
+                "title" : "Estimated mean displacement"
+            }
+        ],
+        [
+            {
+                "var" : ["motion_ec_lin"],
+                "type" : "line",
+                "xlabel" : "Volume",
+                "ylabel" : "Hz/mm",
+                "legend" : ["x", "y", "z"],
+                "title" : "Eddy currents linear terms"
+            }
+        ],
+        [
+            {
+                "var" : ["outliers_tot_pe"],
+                "type" : "bar",
+                "xlabel" : "Phase encoding direction",
+                "ylabel" : "% outliers",
+                "xticklabels" : "data_unique_pedirs"
+            },
+            {
+                "var" : ["outliers_tot_bval"],
+                "type" : "bar",
+                "xlabel" : "b-value [s/mm2]",
+                "ylabel" : "% outliers",
+                "xticklabels" : "data_unique_bvals",
+                "colspan" : 2
+            }
+        ],
+        [
+            {
+                "var" : ["outliers_tot_vol"],
+                "type" : "line",
+                "xlabel" : "Volume",
+                "ylabel" : "% outliers",
+                "title" : "Outliers by volume"
+            }
+        ],
+        [
+            {
+                "var" : ["outliers_slice_vol"],
+                "type" : "heatmap",
+                "xlabel" : "Volume",
+                "ylabel" : "Slice",
+                "cbarlabel" : "No. std. devs away from mean slice-difference",
+                "vmin" : -4,
+                "vmax" : 4
+            }
+        ],
+        [
+            {
+                "group_title" : "Average signals",
+                "img" : "analysis/dMRI/preproc/eddy/squat/avg_b0",
+                "type" : "img",
+                "title" :  "Average DW signal (B=0)"
+            }
+        ],
+        [
+            {
+                "img" : "analysis/dMRI/preproc/eddy/squat/avg_b1000",
+                "type" : "img",
+                "title" :  "Average DW signal (B=1000)"
+            }
+        ],
+        [
+            {
+                "img" : "analysis/dMRI/preproc/eddy/squat/avg_b2000",
+                "type" : "img",
+                "title" :  "Average DW signal (B=2000)"
+            }
+        ],
+        [
+            {
+                "group_title" : "CNR / tSNR",
+                "img" : "analysis/dMRI/preproc/eddy/squat/cnr_b0",
+                "type" : "img",
+                "title" :  "tSNR map (B=0)"
+            }
+        ],
+        [
+            {
+                "img" : "analysis/dMRI/preproc/eddy/squat/cnr_b1000",
+                "type" : "img",
+                "title" :  "CNR map (B=1000)"
+            }
+        ],
+        [
+            {
+                "img" : "analysis/dMRI/preproc/eddy/squat/cnr_b2000",
+                "type" : "img",
+                "title" :  "CNR map (B=2000)"
+            }
+        ],
+        [
+            {
                 "group_title" : "Volume-to-volume motion",
-                "var" : "mot_abs",
+                "var" : "motion_abs_mean",
                 "title" : "Absolute motion",
                 "ylabel" : "mm (avg)",
                 "ylim" : 0
             },
             {
-                "var" : "mot_rel",
+                "var" : "motion_rel_mean",
                 "title" : "Relative motion",
                 "ylabel" : "mm (avg)",
                 "ylim" : 0
-            },
+            }
+        ],
+        [
             {
-                "var" : "motion_trans_avg",
+                "var" : "motion_v2v_trans_mean",
                 "title" : "Translations",
                 "ylabel" : "mm (avg)",
                 "xticklabels" : ["x", "y", "z"]
             },
             {
-                "var" : "motion_rot_avg",
+                "var" : "motion_v2v_rot_mean",
                 "title" : "Rotations",
                 "ylabel" : "deg (avg)",
                 "xticklabels" : ["x", "y", "z"]
-            }
-        ],
-        [
-             {
+            },
+            {
                 "group_title" : "Eddy currents",
-                "var" : "ec_lin_avg",
+                "var" : "motion_ec_lin_std",
                 "title" : "EC linear terms",
                 "ylabel" : "Hz/mm (std)",
                 "xticklabels" : ["x", "y", "z"],
                 "ylim" : 0
-            },
+            }
+        ],
+        [
             {
                 "group_title" : "Within-volume motion",
                 "var" : "ec_s2v_trans_avg_std",
@@ -141,7 +266,7 @@
                 "ylim" : 0
             },
             {
-                "var" : "outliers_b",
+                "var" : "outliers_tot_bval",
                 "title" : "b-value outliers",
                 "ylabel" : "%",
                 "xticklabels" : "data_unique_bvals",
@@ -149,10 +274,10 @@
                 "ylim" : 0
             },
             {
-                "var" : "outliers_pe",
+                "var" : "outliers_tot_pe",
                 "title" : "PE dir outliers",
                 "ylabel" : "%",
-                "xticklabels" : "data_unique_pes",
+                "xticklabels" : "data_unique_pedirs",
                 "xlabel" : "PE direction",
                 "ylim" : 0
             }
@@ -160,14 +285,15 @@
         [
             {
                 "group_title" : "SNR/CNR",
-                "var" : "nr_snr_avg",
+                "var" : "snr_mean",
                 "title" : "SNR (avg)",
                 "xticklabels" : [0],
                 "xlabel" : "b-value",
-                "ylim" : 0
+                "ylim" : 0,
+                "colspan" : 1
             },
             {
-                "var" : "nr_cnr_avg",
+                "var" : "cnr_mean_bval",
                 "title" : "CNR (avg)",
                 "xticklabels" : "data_unique_bvals",
                 "xlabel" : "b-value",
