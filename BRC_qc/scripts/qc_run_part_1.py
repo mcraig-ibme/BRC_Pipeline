@@ -7,9 +7,6 @@ overlap with qc_run.py because of the need to run as an independent batch job.
 import argparse
 import sys
 import os
-import subprocess
-import tempfile
-import shutil
 
 from utils import runcmd
 from idpqc import run_idpqc
@@ -73,8 +70,9 @@ def main():
 
     # Collect individual subjects into a group JSON file and generate reports
     print("Collecting subject QC dir into group JSON file")
+    squatdir = os.environ.get("SQUATDIR", "")
     cmd = [
-        "squat",
+        f"{squatdir}/squat",
         "--subjdir", args.indir, 
         "--subjects", args.subjids, 
         "--extract",
